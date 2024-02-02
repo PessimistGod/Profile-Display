@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { backendURL } from '../../Constants';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../../Components/Loading';
+import { useToast } from '../../ContextProvider/ToastContext';
 
 const Signup = () => {
     const initialForm = {
@@ -11,15 +13,20 @@ const Signup = () => {
         confirmPassword: "",
     }
     const [formData, setFormData] = useState(initialForm);
+  const [loading, setLoading] = useState(false)
+  const { notify } = useToast();
+
 
     const navigate = useNavigate();
 
     const handleSignup = async (e) => {
+        setLoading(true)
         e.preventDefault();
 
         // Check if passwords match
         if (formData.password !== formData.confirmPassword) {
             console.error('Passwords do not match');
+            notify('Password does not match', 'success')
             return;
         }
 
@@ -33,8 +40,15 @@ const Signup = () => {
 
             // Redirect to the login page after successful signup
             setFormData(initialForm);
+            setLoading(false)
+            setTimeout(() => {
+                notify('User has been Created', 'success')
+            }, 600);
             navigate('/login');
+
         } catch (error) {
+            setLoading(false)
+            notify('something went wrong!!', 'success')
             console.error('Signup error:', error);
         }
     };
@@ -47,6 +61,7 @@ const Signup = () => {
     };
 
     return (
+        loading ? <Loading /> : (
         <div>
             <form onSubmit={handleSignup}>
 
@@ -83,7 +98,9 @@ const Signup = () => {
   </div>
             </form>
         </div>
+        )
     );
+
 };
 
 export default Signup;

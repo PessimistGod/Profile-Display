@@ -39,9 +39,9 @@ const Navbar = () => {
         <div className="relative flex h-16 items-center justify-between">
           <div className='flex justify-center items-center gap-10 text-xs md:text-lg'>
             {/* <div className='flex justify-center items-center gap-2'><FaGear size={28}/> Setting</div> */}
-            <Link href="mailto:" target='_blank' rel='no-referer'>
+            <a href="mailto:vivekanandaj867@gmail.com" target='_blank' rel="noopener noreferrer">
             <div className='flex justify-center items-center gap-2'><MdContactMail size={28}/> Developer Contact</div>
-            </Link>
+            </a>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {isLoggedIn ? (

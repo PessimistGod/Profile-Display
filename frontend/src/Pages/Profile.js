@@ -4,11 +4,13 @@ import { backendURL } from '../Constants';
 import { useToast } from '../ContextProvider/ToastContext';
 import { useUser } from '../ContextProvider/UserContext';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../Components/Loading';
 
 const Profile = () => {
   const { notify } = useToast();
   const { imageUrl, updateImage } = useUser();
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
 
   useEffect(()=>{
@@ -33,6 +35,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setLoading(true)
       try {
         const response = await axios.get(`${backendURL}/profile`, {
           headers: {
@@ -55,7 +58,9 @@ const Profile = () => {
         if (user.image_url) {
           updateImage(user.image_url)
         }
+        setLoading(false)
       } catch (error) {
+        setLoading(false)
         console.error('Error fetching user profile:', error);
       }
     };
@@ -66,6 +71,7 @@ const Profile = () => {
   
 
   const handleUpdateProfile = async () => {
+    setLoading(true)
     try {
       const formattedFormData = {
         ...formData,
@@ -83,8 +89,12 @@ const Profile = () => {
       );
       updateImage(formattedFormData.imageUrl);
       setIsEditing(false);
+    setLoading(false)
+
       notify('Updated Success', 'success');
     } catch (error) {
+    setLoading(false)
+
       console.error('Update profile error:', error);
     }
   };
@@ -104,6 +114,8 @@ const Profile = () => {
   console.log(imageUrl)
 
   return (
+    loading ? <Loading /> : (
+      <>
     <div className="max-w-2xl mx-auto mt-8 p-8 border rounded-lg shadow-md bg-white">
       <h2 className="text-3xl font-semibold mb-6 flex items-center justify-between">
         User Profile
@@ -233,6 +245,8 @@ const Profile = () => {
         </div>
       </form>
     </div>
+    </>
+    )
   );
 };
 

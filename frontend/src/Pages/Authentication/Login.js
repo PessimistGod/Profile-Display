@@ -3,6 +3,8 @@ import axios from "axios";
 import { backendURL } from "../../Constants";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../ContextProvider/UserContext"; // Import the useUser context
+import Loading from "../../Components/Loading";
+import { useToast } from "../../ContextProvider/ToastContext";
 
 const Login = () => {
   const initialForm = {
@@ -11,10 +13,14 @@ const Login = () => {
   };
   const [formData, setFormData] = useState(initialForm);
   const { login } = useUser(); // Get the login function from the context
+  const [loading, setLoading] = useState(false)
+  const { notify } = useToast();
+
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
+    setLoading(true)
     e.preventDefault();
   
     try {
@@ -29,12 +35,19 @@ const Login = () => {
         login(token);
   
         localStorage.setItem("profileDataUser", token);
-  
+        setTimeout(() => {
+          notify('User has been Created', 'success')
+      }, 600);
         navigate("/");
       } else {
+        setLoading(false)
+        notify('Invalid Auth', 'success')
         console.error("Token not provided in the server response.");
       }
     } catch (error) {
+      setLoading(false)
+      notify('Error', 'success')
+
       console.error("Login error:", error);
     }
   };
@@ -48,6 +61,7 @@ const Login = () => {
   };
 
   return (
+    loading ? <Loading /> : (
     <div>
       <form onSubmit={handleLogin}>
         <div className="container px-5 py-24 mx-auto flex ">
@@ -96,6 +110,7 @@ const Login = () => {
         </div>
       </form>
     </div>
+    )
   );
 };
 
